@@ -5,9 +5,12 @@ import os
 base_url = 'https://www.douyu.com/'
 backpack_uri = 'japi/prop/backpack/web/v1'
 send_gift_uri = 'japi/prop/donate/mainsite/v1'
+serve_base_url = 'https://sc.ftqq.com/'
 
 room_id = os.environ['ROOMID']
 cookie = os.environ['COOKIE']
+sc_key = os.environ['SCKEY']
+sc_on = os.environ['SCON'] == 'ON'
 
 headers = {
     'authority': 'www.douyu.com',
@@ -23,6 +26,12 @@ headers = {
     'sec-fetch-site': 'same-origin',
     'sec-ch-ua-platform': '"Windows"',
 }
+
+
+def send_message_list(message_list: list(str), sc_key: str) -> None:
+    raw_message = '\n'.join(message_list)
+    requests.get(serve_base_url + sc_key + '.send?text=' + raw_message)
+
 
 def format_cookie(cookie_str: str) -> dict:
     cookie_dict = {}
@@ -68,3 +77,5 @@ if __name__ == '__main__':
     gift_list = query_gift_list()
     msg_list = send_gift(gift_list)
     print(msg_list)
+    if sc_key:
+        send_message_list(msg_list, sc_key)
